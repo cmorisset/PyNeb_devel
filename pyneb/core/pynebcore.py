@@ -2446,7 +2446,8 @@ class Atom(object):
                   end_x=end_x, to_eval=to_eval, nCut=nCut, maxIter=maxIter)
 
     def getIonAbundance(self, int_ratio, tem, den, lev_i= -1, lev_j= -1, wave= -1, to_eval=None, 
-                        Hbeta=100., tem_HI=None, extrapHbeta=False, use_ANN=False):
+                        Hbeta=100., tem_HI=None, extrapHbeta=False, use_ANN=False,
+                        ref_levels=(4, 2)):
         """
         Compute the ionic abundance relative to H+ given the intensity of a line or sum of lines, 
         the temperature, and the density. 
@@ -2470,6 +2471,7 @@ class Atom(object):
             tem_HI:       HI temperature. If not set, tem is used.
             extrapHbeta: [False] if set to True, Hbeta is extrapolated at low Te using Aller 82 function
             use_ANN: [False] if set to True, use Machine Learning to compute line emissivities
+            ref_levels:   to which HI line the int_ratio is given. Default: (4,2), indicating Hbeta
             
         **Usage:**
             
@@ -2487,7 +2489,7 @@ class Atom(object):
             return None
         if ((np.squeeze(np.asarray(int_ratio)).shape != np.squeeze(np.asarray(tem)).shape) | 
             (np.squeeze(np.asarray(den)).shape != np.squeeze(np.asarray(tem)).shape)):
-            self.log_.warn('int_ratio, tem and den must does not have the same shape', calling=self.calling)
+            self.log_.warn('int_ratio, tem and den does not have the same shape', calling=self.calling)
         if (lev_i == -1) & (lev_j == -1) & (wave == -1) & (to_eval is None):
             self.log_.error('At least one of lev_i, lev_j, wave or to_eval must be supplied', calling=self.calling)
             return None
@@ -2506,7 +2508,7 @@ class Atom(object):
         if extrapHbeta:
             HbEmis = getHbEmissivity(tem= tem_HI, den=den)
         else:
-            HbEmis = getRecEmissivity(tem_HI, den, 4, 2, atom='H1', product=False)
+            HbEmis = getRecEmissivity(tem_HI, den, ref_levels[0], ref_levels[1], atom='H1', product=False)
         ionAbundance = ((int_ratio / Hbeta) * (HbEmis / emis))
         return ionAbundance
     
