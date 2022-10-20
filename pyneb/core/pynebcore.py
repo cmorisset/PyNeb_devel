@@ -2509,7 +2509,7 @@ class Atom(object):
             HbEmis = getHbEmissivity(tem= tem_HI, den=den)
         else:
             HbEmis = getRecEmissivity(tem_HI, den, ref_levels[0], ref_levels[1], atom='H1', product=False)
-        ionAbundance = ((int_ratio / Hbeta) * (HbEmis / emis))
+        ionAbundance = ((int_ratio / HI) * (HbEmis / emis))
         return ionAbundance
     
 
