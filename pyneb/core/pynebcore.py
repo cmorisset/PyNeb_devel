@@ -2446,7 +2446,7 @@ class Atom(object):
                   end_x=end_x, to_eval=to_eval, nCut=nCut, maxIter=maxIter)
 
     def getIonAbundance(self, int_ratio, tem, den, lev_i= -1, lev_j= -1, wave= -1, to_eval=None, 
-                        HI=100., tem_HI=None, extrapHbeta=False, use_ANN=False,
+                        Hbeta=100., tem_HI=None, extrapHbeta=False, use_ANN=False,
                         ref_levels=(4, 2)):
         """
         Compute the ionic abundance relative to H+ given the intensity of a line or sum of lines, 
@@ -2509,7 +2509,7 @@ class Atom(object):
             HbEmis = getHbEmissivity(tem= tem_HI, den=den)
         else:
             HbEmis = getRecEmissivity(tem_HI, den, ref_levels[0], ref_levels[1], atom='H1', product=False)
-        ionAbundance = ((int_ratio / HI) * (HbEmis / emis))
+        ionAbundance = ((int_ratio / Hbeta) * (HbEmis / emis))
         return ionAbundance
     
 
