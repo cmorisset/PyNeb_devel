@@ -2446,7 +2446,7 @@ class Atom(object):
                   end_x=end_x, to_eval=to_eval, nCut=nCut, maxIter=maxIter)
 
     def getIonAbundance(self, int_ratio, tem, den, lev_i= -1, lev_j= -1, wave= -1, to_eval=None, 
-                        Hbeta=100., tem_HI=None, extrapHbeta=False, use_ANN=False,
+                        HI=100., tem_HI=None, extrapHbeta=False, use_ANN=False,
                         ref_levels=(4, 2)):
         """
         Compute the ionic abundance relative to H+ given the intensity of a line or sum of lines, 
