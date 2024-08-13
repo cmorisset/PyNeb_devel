@@ -42,4 +42,4 @@ T['TEMP'], T['DENS'] = np.meshgrid(tab_temp, tab_log_dens)
 for i_wl, wl in enumerate(tab_wl):
     T[wl] = tab_tr[:,i_wl,:]
 
-write_table_hdf5(T, '../he_i_rec_DZS22.hdf5', 'updated_data', overwrite=True)
+write_table_hdf5(T, '../he_i_rec_DZS22_air.hdf5', 'updated_data', overwrite=True)
