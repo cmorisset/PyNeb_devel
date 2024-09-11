@@ -1290,12 +1290,7 @@ class Atom(object):
         self.calling = 'Atom ' + self.atom
         self.log_.message('Making atom object for {0} {1}'.format(self.elem, self.spec), calling=self.calling)
         self.NLevels = NLevels
-        if pumpingSED is None:
-            def foo(lambda_):
-                return np.zeros_like(lambda_)
-            self.pumpingSED = foo
-        else:
-            self.pumpingSED = pumpingSED
+        self.pumpingSED = pumpingSED
         dataFile = atomicData.getDataFile(self.atom, data_type='atom')
         if dataFile is None:
             self.atomFileType = None
@@ -1384,10 +1379,10 @@ class Atom(object):
         
         self._A = self.getA() # index = quantum number - 1
         self._B = np.zeros_like(self._A)
-        for i in range(self.atomNLevels):
-            for j in range(i):
-                self._B[j,i] = self._A[i,j] / (8 * np.pi * CST.HPLANCK * (self.getEnergy(i+1, unit='cm-1')-self.getEnergy(j+1, unit='cm-1'))**3) 
-                self._B[i,j] = self._B[j,i] * self.getStatWeight(i+1) / self.getStatWeight(j+1)
+        for i in range(self.atomNLevels): #upper
+            for j in range(i): #lower
+                self._B[i,j] = self._A[i,j] / (8 * np.pi * CST.HPLANCK * (self.getEnergy(i+1, unit='cm-1')-self.getEnergy(j+1, unit='cm-1'))**3) 
+                self._B[j,i] = self._B[i,j] * self.getStatWeight(i+1) / self.getStatWeight(j+1)
         self._Energy = self.getEnergy() # Angstrom^-1
         self._StatWeight = self.getStatWeight()
         if self.NLevels > 0:
@@ -1821,9 +1816,12 @@ class Atom(object):
             den_rav = den.ravel()
             q = self.getCollRates(tem_rav, n_level)
             A = self._A[:n_level, :n_level]
-            FB = self._B[:n_level, :n_level] * self.pumpingSED(self.wave_Ang[:n_level, :n_level])
-            for i in range(n_level):
-                FB[i,i] = 0.0
+            if self.pumpingSED is None:
+                FB = self._B[:n_level, :n_level] * 0.0
+            else:
+                FB = self._B[:n_level, :n_level] * self.pumpingSED(self.wave_Ang[:n_level, :n_level])
+                for i in range(n_level):
+                    FB[i,i] = 0.0
             pop_result = np.zeros(res_shape_rav1)
             coeff_matrix = np.ones(res_shape_rav2)
             sum_q_up = np.zeros(res_shape_rav1)
@@ -1844,7 +1842,7 @@ class Atom(object):
             for row in range(1, n_level):
                 # upper right half            
                 for col in range(row + 1, n_level):
-                    coeff_matrix[row, col] = den_rav * q[col, row] + A[col, row]
+                    coeff_matrix[row, col] = den_rav * q[col, row] + A[col, row] + FB[col, row]
                 # lower left half
                 for col in range(row):
                     coeff_matrix[row, col] = den_rav * q[col, row] + FB[col, row]
