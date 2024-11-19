@@ -37,6 +37,7 @@ with gzip.open('allem.d.gz', 'r') as f:
 tab_tr = np.array(tab_tr).reshape(nd, ntr, nt)
 
 T = Table()
+T = Table(meta={'SOURCE': 'Del Zanna & Storey, 2022, MNRAS, 513, 1198'})
 T['TEMP'], T['DENS'] = np.meshgrid(tab_temp, tab_log_dens)
 
 for i_wl, wl in enumerate(tab_wl):
